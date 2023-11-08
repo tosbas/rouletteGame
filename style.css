@@ -1,0 +1,28 @@
+body{
+    overflow: hidden;
+    margin: 0;
+    background-color: beige;
+}
+
+#canvas2{
+    position: absolute;
+    z-index: 2;
+}
+
+#canvas1{
+    position: absolute;
+    z-index: 1;
+}
+
+
+#btn-turn-wheel{
+    position: absolute;
+    bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    left: 0;
+    right: 0;
+    width: 100px;
+    padding: 10px;
+    z-index: 3;
+}
