@@ -65,7 +65,7 @@ const drawSector = (sector, i) => {
     ctxWheel.beginPath();
     ctxWheel.fillStyle = sector.color;
     ctxWheel.strokeStyle = "white";
-    ctxWheel.lineWidth = 5;
+    ctxWheel.lineWidth = 2;
     ctxWheel.moveTo(canvasWheel.width / 2, canvasWheel.height / 2);
     ctxWheel.arc(canvasWheel.width / 2, canvasWheel.height / 2, radius, startAngle, startAngle + sectorAngle);
     ctxWheel.lineTo(canvasWheel.width / 2, canvasWheel.height / 2);
