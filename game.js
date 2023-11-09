@@ -49,7 +49,7 @@ const PI = Math.PI;
 const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
-const friction = 0.995;
+const friction = 0.996;
 const minAngularVelocity = 0.001;
 
 let maxAngularVelocity = 0;
@@ -86,11 +86,12 @@ const drawSector = (sector, i) => {
 };
 
 const rotateWheel = () => {
+   
     canvasWheel.style.transform = `rotate(${currentAngle - PI / 2}rad)`;
 };
 
-const arrowLength = 100;
-const arrowWidth = 80;
+const arrowLength = 50;
+const arrowWidth = 40;
 let arrowAngle = 90;
 
 const drawArrow = () => {
@@ -114,7 +115,16 @@ const drawArrow = () => {
 const startAnimationLoop = () => {
     requestAnimationFrame(startAnimationLoop);
 
-    if (!isSpinning) return;
+    if (!isSpinning) {
+        
+        return;
+    };
+
+    const sector = sectors[getCurrentSectorIndex()];
+    result.textContent = `${sector.label}`;
+    result.style.backgroundColor = `${sector.color}`;
+
+
     if (currentAngularVelocity >= maxAngularVelocity) isAccelerating = false;
 
     if (isAccelerating) {
@@ -139,7 +149,8 @@ const startAnimationLoop = () => {
 
 const displayResult = () => {
     const sector = sectors[getCurrentSectorIndex()];
-    result.textContent = `La roulette s'est arrêtée sur : ${sector.label}`;
+    result.textContent = `${sector.label}`;
+    result.style.backgroundColor = `${sector.color}`;
 }
 
 btnSpin.addEventListener("click", () => {
@@ -151,3 +162,8 @@ btnSpin.addEventListener("click", () => {
 });
 
 sectors.forEach(drawSector);
+
+currentAngle = rand(-TAU / 2, TAU / 2);
+rotateWheel();
+
+
