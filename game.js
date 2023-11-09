@@ -11,9 +11,6 @@ canvasWheel.height = window.innerHeight;
 canvasArrow.width = window.innerWidth;
 canvasArrow.height = window.innerHeight;
 
-
-const casesLocaStorage = JSON.parse(localStorage.getItem("cases"));
-
 const sectors = [];
 
 for (let i = 5; i < 105; i += 5) {
@@ -86,7 +83,7 @@ const drawSector = (sector, i) => {
 };
 
 const rotateWheel = () => {
-   
+
     canvasWheel.style.transform = `rotate(${currentAngle - PI / 2}rad)`;
 };
 
@@ -116,7 +113,7 @@ const startAnimationLoop = () => {
     requestAnimationFrame(startAnimationLoop);
 
     if (!isSpinning) {
-        
+
         return;
     };
 
