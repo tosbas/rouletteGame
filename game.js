@@ -5,6 +5,12 @@ const ctxArrow = canvasArrow.getContext('2d');
 const btnSpin = document.getElementById("btn-turn-wheel");
 const result = document.getElementById("result");
 
+const rouletteSong = document.getElementById("rouletteSong");
+const finishSong = document.getElementById("finishSong");
+
+const overlay = document.getElementById("overlay");
+
+
 canvasWheel.width = window.innerWidth;
 canvasWheel.height = window.innerHeight;
 
@@ -20,7 +26,7 @@ for (let i = 5; i < 105; i += 5) {
     if (i == 95) {
         color = `hsl(0, 70%, 60%)`;
         sectors.push(
-            { color: color, label: 50 }
+            { id: 50, color: color, label: 50 }
         );
     }
 
@@ -31,7 +37,7 @@ for (let i = 5; i < 105; i += 5) {
     }
 
     sectors.push(
-        { color: color, label: i }
+        { id: i, color: color, label: i }
     );
 }
 
@@ -52,7 +58,7 @@ const minAngularVelocity = 0.001;
 let maxAngularVelocity = 0;
 let currentAngularVelocity = 0;
 
-let currentAngle = 0;
+let currentAngle = rand(-TAU / 2, TAU / 2);
 
 let isSpinning = false;
 let isAccelerating = false;
@@ -83,7 +89,10 @@ const drawSector = (sector, i) => {
 };
 
 const rotateWheel = () => {
-
+    finishSong.pause();
+    finishSong.currentTime = 0;
+    overlay.classList.remove("overlay");
+    result.classList.remove("resultVictory");
     canvasWheel.style.transform = `rotate(${currentAngle - PI / 2}rad)`;
 };
 
@@ -109,18 +118,16 @@ const drawArrow = () => {
     ctxArrow.restore();
 }
 
+const array = [];
+
 const startAnimationLoop = () => {
     requestAnimationFrame(startAnimationLoop);
 
-    if (!isSpinning) {
-
-        return;
-    };
+    if (!isSpinning) return;
 
     const sector = sectors[getCurrentSectorIndex()];
     result.textContent = `${sector.label}`;
     result.style.backgroundColor = `${sector.color}`;
-
 
     if (currentAngularVelocity >= maxAngularVelocity) isAccelerating = false;
 
@@ -134,8 +141,33 @@ const startAnimationLoop = () => {
         if (currentAngularVelocity < minAngularVelocity) {
             isSpinning = false;
             currentAngularVelocity = 0;
+            finishSong.play();
+            overlay.classList.add("overlay");
+            result.classList.add("resultVictory");
             cancelAnimationFrame(startAnimationLoop);
             displayResult();
+
+            setTimeout(() => {
+                result.innerHTML = "GO !";
+                result.removeAttribute("style");
+                result.style.backgroundColor = "#00000";
+                overlay.classList.remove("overlay");
+                result.classList.remove("resultVictory");
+            }, 7000);
+
+            return;
+        }
+    }
+
+    if (!array.includes(sector.id)) {
+        array.push(sector.id);
+
+        rouletteSong.volume = 0.5;
+        rouletteSong.play();
+        rouletteSong.currentTime = 0;
+
+        if (array.length > 2) {
+            array.splice(0, 2);
         }
     }
 
@@ -160,7 +192,7 @@ btnSpin.addEventListener("click", () => {
 
 sectors.forEach(drawSector);
 
-currentAngle = rand(-TAU / 2, TAU / 2);
 rotateWheel();
+
 
 

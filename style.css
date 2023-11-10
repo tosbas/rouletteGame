@@ -1,27 +1,36 @@
-body, html{
+body,
+html {
     overflow: hidden;
     margin: 0;
     background-color: beige;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+    user-select: none;
 }
 
-#canvas2{
+#canvas2 {
     position: absolute;
     z-index: 2;
 }
 
-#canvas1{
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    z-index: 98;
+    width: 100%;
+    height: 100%;
+}
+
+#canvas1 {
     position: absolute;
     z-index: 1;
 }
 
-#btn-turn-wheel #result{
+#btn-turn-wheel #result {
     width: 200px;
     height: 200px;
     border: 2px solid white;
-    background-color: red;
     font-size: 50px;
     font-weight: bolder;
     cursor: pointer;
@@ -32,7 +41,7 @@ body, html{
     right: 0;
     top: 0;
     bottom: 0;
-    margin:auto;
+    margin: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -40,3 +49,31 @@ body, html{
     color: #ffffff;
 
 }
+
+.resultVictory {
+    animation: victory 2s ease-in-out infinite alternate;
+}
+
+@keyframes victory {
+    0% {
+        font-size: 50px;
+        text-shadow: 1px 1px 5px #000000;
+    }
+
+    100% {
+        font-size: 80px;
+        text-shadow: 1px 1px 5px #000000;
+    }
+}
+
+/* #btn-turn-wheel{
+    position: absolute;
+    bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    left: 0;
+    right: 0;
+    width: 100px;
+    padding: 10px;
+    z-index: 3;
+} */
