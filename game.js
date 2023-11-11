@@ -35,7 +35,7 @@ const minAngularVelocity = 0.0005;
 
 let maxAngularVelocity = 0.40;
 let currentAngularVelocity = 0;
-let currentAngle = rand(-TAU / 2, TAU / 2);
+let currentAngle = 0;
 
 let isSpinning = false;
 let isAccelerating = false;
@@ -192,6 +192,7 @@ btnSpin.addEventListener("click", () => {
     isAccelerating = true;
     rouletteSong.currentTime = 0;
     currentAngularVelocity = 0.0005;
+    currentAngle = rand(-TAU / 2, TAU / 2);
     startTime = Date.now();
     clearTimeout(timeout);
     cancelAnimationFrame(requestId);
