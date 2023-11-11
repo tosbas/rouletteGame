@@ -10,58 +10,41 @@ const finishSong = document.getElementById("finishSong");
 
 const overlay = document.getElementById("overlay");
 
-
-canvasWheel.width = window.innerWidth;
-canvasWheel.height = window.innerHeight;
-
-canvasArrow.width = window.innerWidth;
-canvasArrow.height = window.innerHeight;
+canvasWheel.width = canvasArrow.width = window.innerWidth;
+canvasWheel.height = canvasArrow.height = window.innerHeight;
 
 const sectors = [];
 
 for (let i = 5; i < 105; i += 5) {
-
-    let color;
-
-    if (i == 95) {
-        color = `hsl(0, 70%, 60%)`;
-        sectors.push(
-            { id: 50, color: color, label: 50 }
-        );
-    }
-
-    if (i === 100) {
-        color = "hsl(10, 100%, 50%)";
-    } else {
-        color = `hsl(${i * 255}, 70%, 60%)`;
-    }
-
-    sectors.push(
-        { id: i, color: color, label: i }
-    );
+    let color = (i === 95) ? `hsl(0, 70%, 60%)` : (i === 100) ? "hsl(10, 100%, 50%)" : `hsl(${i * 255}, 70%, 60%)`;
+    sectors.push({ id: i, color: color, label: (i === 95) ? 50 : i });
 }
-
 
 const rand = (min, max) => Math.random() * (max - min) + min;
 
 const sectorCount = sectors.length;
-const diameter = 800;
+const diameter = window.innerHeight - 163;
 const radius = diameter / 2;
 
 const PI = Math.PI;
 const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
-const friction = 0.996;
-const minAngularVelocity = 0.001;
+const friction = 0.995;
+const minAngularVelocity = 0.0005;
 
-let maxAngularVelocity = 0;
+let maxAngularVelocity = 0.40;
 let currentAngularVelocity = 0;
-
 let currentAngle = rand(-TAU / 2, TAU / 2);
 
 let isSpinning = false;
 let isAccelerating = false;
+
+let startTime;
+let timeout;
+let requestId;
+
+const spinDuration = 24;
 
 const getCurrentSectorIndex = () => Math.floor(sectorCount - currentAngle / TAU * sectorCount) % sectorCount;
 
@@ -116,14 +99,27 @@ const drawArrow = () => {
     ctxArrow.fill();
     ctxArrow.stroke();
     ctxArrow.restore();
-}
+};
 
 const array = [];
 
 const startAnimationLoop = () => {
-    requestAnimationFrame(startAnimationLoop);
+    requestId = requestAnimationFrame(startAnimationLoop);
 
-    if (!isSpinning) return;
+    if (!isSpinning) {
+        cancelAnimationFrame(requestId);
+        return;
+    }
+
+    const elapsedTime = (Date.now() - startTime) / 1000;
+
+    if (elapsedTime >= spinDuration) {
+        isSpinning = false;
+        startTime = Date.now();
+        cancelAnimationFrame(requestId);
+        displayResult();
+        return;
+    }
 
     const sector = sectors[getCurrentSectorIndex()];
     result.textContent = `${sector.label}`;
@@ -141,58 +137,67 @@ const startAnimationLoop = () => {
         if (currentAngularVelocity < minAngularVelocity) {
             isSpinning = false;
             currentAngularVelocity = 0;
-            finishSong.play();
-            overlay.classList.add("overlay");
-            result.classList.add("resultVictory");
-            cancelAnimationFrame(startAnimationLoop);
+            cancelAnimationFrame(requestId);
             displayResult();
-
-            setTimeout(() => {
-                result.innerHTML = "GO !";
-                result.removeAttribute("style");
-                result.style.backgroundColor = "#00000";
-                overlay.classList.remove("overlay");
-                result.classList.remove("resultVictory");
-            }, 7000);
-
             return;
         }
     }
 
+    displaySongRotate(sector);
+
+    currentAngle += currentAngularVelocity;
+    currentAngle %= TAU;
+    rotateWheel();
+};
+
+const displaySongRotate = (sector) => {
     if (!array.includes(sector.id)) {
         array.push(sector.id);
 
         rouletteSong.volume = 0.5;
         rouletteSong.play();
-        rouletteSong.currentTime = 0;
+        if (rouletteSong.currentTime >= rouletteSong.duration) {
+            rouletteSong.pause();
+        }
 
         if (array.length > 2) {
             array.splice(0, 2);
         }
     }
-
-    currentAngle += currentAngularVelocity;
-    currentAngle %= TAU;
-    rotateWheel();
-}
+};
 
 const displayResult = () => {
     const sector = sectors[getCurrentSectorIndex()];
     result.textContent = `${sector.label}`;
     result.style.backgroundColor = `${sector.color}`;
-}
+
+    finishSong.play();
+    overlay.classList.add("overlay");
+    result.classList.add("resultVictory");
+
+    rouletteSong.pause();
+
+    timeout = setTimeout(() => {
+        result.innerHTML = "GO !";
+        result.removeAttribute("style");
+        result.style.backgroundColor = "#00000";
+        overlay.classList.remove("overlay");
+        result.classList.remove("resultVictory");
+    }, 7000);
+};
 
 btnSpin.addEventListener("click", () => {
     if (isSpinning) return;
     isSpinning = true;
     isAccelerating = true;
-    maxAngularVelocity = rand(0.25, 0.40);
+    rouletteSong.currentTime = 0;
+    currentAngularVelocity = 0.0005;
+    startTime = Date.now();
+    clearTimeout(timeout);
+    cancelAnimationFrame(requestId);
     startAnimationLoop();
 });
 
 sectors.forEach(drawSector);
 
 rotateWheel();
-
-
-
