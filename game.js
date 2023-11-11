@@ -101,8 +101,6 @@ const drawArrow = () => {
     ctxArrow.restore();
 };
 
-const array = [];
-
 const startAnimationLoop = () => {
     requestId = requestAnimationFrame(startAnimationLoop);
 
@@ -150,19 +148,11 @@ const startAnimationLoop = () => {
     rotateWheel();
 };
 
-const displaySongRotate = (sector) => {
-    if (!array.includes(sector.id)) {
-        array.push(sector.id);
-
-        rouletteSong.volume = 0.5;
-        rouletteSong.play();
-        if (rouletteSong.currentTime >= rouletteSong.duration) {
-            rouletteSong.pause();
-        }
-
-        if (array.length > 2) {
-            array.splice(0, 2);
-        }
+const displaySongRotate = () => {
+    rouletteSong.volume = 0.5;
+    rouletteSong.play();
+    if (rouletteSong.currentTime >= rouletteSong.duration) {
+        rouletteSong.pause();
     }
 };
 
