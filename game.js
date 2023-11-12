@@ -31,9 +31,9 @@ const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
 const friction = 0.996;
-const minAngularVelocity = 0.0002;
+const minAngularVelocity = 0.0003;
 
-let maxAngularVelocity = 0.40;
+let maxAngularVelocity = 0;
 let currentAngularVelocity = 0;
 let currentAngle = 0;
 
@@ -169,6 +169,7 @@ btnSpin.addEventListener("click", () => {
     isAccelerating = true;
     rouletteSong.currentTime = 0;
     currentAngle = rand(-TAU / 2, TAU / 2);
+    maxAngularVelocity = rand(0.20, 0.40);
     clearTimeout(timeout);
     cancelAnimationFrame(requestId);
     startAnimationLoop();
