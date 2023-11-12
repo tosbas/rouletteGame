@@ -31,7 +31,7 @@ const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
 const friction = 0.996;
-const minAngularVelocity = 0.0003;
+const minAngularVelocity = 0.0005;
 
 let maxAngularVelocity = 0;
 let currentAngularVelocity = 0;
