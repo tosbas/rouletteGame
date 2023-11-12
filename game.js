@@ -1,7 +1,5 @@
 const canvasWheel = document.querySelector('#canvas1');
 const ctxWheel = canvasWheel.getContext('2d');
-const canvasArrow = document.querySelector("#canvas2");
-const ctxArrow = canvasArrow.getContext('2d');
 const btnSpin = document.getElementById("btn-turn-wheel");
 const result = document.getElementById("result");
 
@@ -10,8 +8,8 @@ const finishSong = document.getElementById("finishSong");
 
 const overlay = document.getElementById("overlay");
 
-canvasWheel.width = canvasArrow.width = window.innerWidth;
-canvasWheel.height = canvasArrow.height = window.innerHeight;
+canvasWheel.width = window.innerWidth;
+canvasWheel.height = window.innerHeight;
 
 const sectors = [];
 
@@ -64,8 +62,6 @@ const drawSector = (sector, i) => {
     ctxWheel.fillText(sector.label, radius - 10, 10);
     ctxWheel.stroke();
     ctxWheel.restore();
-
-    drawArrow();
 };
 
 const rotateWheel = () => {
@@ -74,28 +70,6 @@ const rotateWheel = () => {
     overlay.classList.remove("overlay");
     result.classList.remove("resultVictory");
     canvasWheel.style.transform = `rotate(${currentAngle - PI / 2}rad)`;
-};
-
-const arrowLength = 50;
-const arrowWidth = 40;
-let arrowAngle = 90;
-
-const drawArrow = () => {
-    ctxArrow.save();
-    ctxArrow.translate(canvasArrow.width / 2, canvasArrow.height / 2 - diameter / 2 - 50);
-    ctxArrow.rotate((arrowAngle * PI) / 180);
-    ctxArrow.fillStyle = "orange";
-    ctxArrow.strokeStyle = "black";
-    ctxArrow.lineWidth = 2;
-    ctxArrow.beginPath();
-    ctxArrow.moveTo(0, -arrowWidth / 2);
-    ctxArrow.lineTo(arrowLength, 0);
-    ctxArrow.lineTo(0, arrowWidth / 2);
-    ctxArrow.lineTo(0, -arrowWidth / 2);
-    ctxArrow.closePath();
-    ctxArrow.fill();
-    ctxArrow.stroke();
-    ctxArrow.restore();
 };
 
 const startAnimationLoop = () => {

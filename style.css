@@ -9,10 +9,6 @@ html {
     user-select: none;
 }
 
-#canvas2 {
-    position: absolute;
-    z-index: 2;
-}
 
 .overlay {
     background-color: rgba(0, 0, 0, 0.5);
@@ -28,9 +24,9 @@ html {
 }
 
 #btn-turn-wheel #result {
-    width: 200px;
-    height: 200px;
-    border: 2px solid white;
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgb(255, 255, 255);
     font-size: 50px;
     font-weight: bolder;
     cursor: pointer;
@@ -47,8 +43,16 @@ html {
     justify-content: center;
     background-color: black;
     color: #ffffff;
-
 }
+
+#result::after {
+    content: "";
+    position: absolute;
+    top: -15px;
+    border: 15px solid transparent;
+    border-bottom-color: rgb(255, 255, 255);
+    border-top: none;
+  }
 
 .resultVictory {
     animation: victory 2s ease-in-out infinite alternate;
@@ -65,15 +69,3 @@ html {
         text-shadow: 1px 1px 5px #000000;
     }
 }
-
-/* #btn-turn-wheel{
-    position: absolute;
-    bottom: 10px;
-    margin-right: auto;
-    margin-left: auto;
-    left: 0;
-    right: 0;
-    width: 100px;
-    padding: 10px;
-    z-index: 3;
-} */
