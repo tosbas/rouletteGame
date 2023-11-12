@@ -138,7 +138,7 @@ const startAnimationLoop = () => {
 const displaySongRotate = () => {
     rouletteSong.volume = 0.5;
     rouletteSong.play();
-    if (rouletteSong.currentTime >= rouletteSong.duration) {
+    if (rouletteSong.currentTime >= 24) {
         rouletteSong.pause();
     }
 };
