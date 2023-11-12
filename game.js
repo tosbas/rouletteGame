@@ -23,15 +23,15 @@ for (let i = 5; i < 105; i += 5) {
 const rand = (min, max) => Math.random() * (max - min) + min;
 
 const sectorCount = sectors.length;
-const diameter = window.innerHeight - 163;
+const diameter = Math.min(window.innerWidth, window.innerHeight - 130);
 const radius = diameter / 2;
 
 const PI = Math.PI;
 const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
-const friction = 0.995;
-const minAngularVelocity = 0.0005;
+const friction = 0.996;
+const minAngularVelocity = 0.0002;
 
 let maxAngularVelocity = 0.40;
 let currentAngularVelocity = 0;
@@ -40,11 +40,8 @@ let currentAngle = 0;
 let isSpinning = false;
 let isAccelerating = false;
 
-let startTime;
 let timeout;
 let requestId;
-
-const spinDuration = 24;
 
 const getCurrentSectorIndex = () => Math.floor(sectorCount - currentAngle / TAU * sectorCount) % sectorCount;
 
@@ -85,7 +82,7 @@ let arrowAngle = 90;
 
 const drawArrow = () => {
     ctxArrow.save();
-    ctxArrow.translate(canvasArrow.width / 2, canvasArrow.height / 2 - 450);
+    ctxArrow.translate(canvasArrow.width / 2, canvasArrow.height / 2 - diameter / 2 - 50);
     ctxArrow.rotate((arrowAngle * PI) / 180);
     ctxArrow.fillStyle = "orange";
     ctxArrow.strokeStyle = "black";
@@ -109,16 +106,6 @@ const startAnimationLoop = () => {
         return;
     }
 
-    const elapsedTime = (Date.now() - startTime) / 1000;
-
-    if (elapsedTime >= spinDuration) {
-        isSpinning = false;
-        startTime = Date.now();
-        cancelAnimationFrame(requestId);
-        displayResult();
-        return;
-    }
-
     const sector = sectors[getCurrentSectorIndex()];
     result.textContent = `${sector.label}`;
     result.style.backgroundColor = `${sector.color}`;
@@ -127,7 +114,7 @@ const startAnimationLoop = () => {
 
     if (isAccelerating) {
         currentAngularVelocity ||= minAngularVelocity;
-        currentAngularVelocity *= 1.06;
+        currentAngularVelocity *= 2;
     } else {
         isAccelerating = false;
         currentAngularVelocity *= friction;
@@ -181,9 +168,7 @@ btnSpin.addEventListener("click", () => {
     isSpinning = true;
     isAccelerating = true;
     rouletteSong.currentTime = 0;
-    currentAngularVelocity = 0.0005;
     currentAngle = rand(-TAU / 2, TAU / 2);
-    startTime = Date.now();
     clearTimeout(timeout);
     cancelAnimationFrame(requestId);
     startAnimationLoop();
