@@ -2,6 +2,8 @@ const canvasWheel = document.querySelector('#canvas1');
 const ctxWheel = canvasWheel.getContext('2d');
 const btnSpin = document.getElementById("btn-turn-wheel");
 const result = document.getElementById("result");
+const canvasArrow = document.getElementById("canvas2");
+const ctxArrow = canvasArrow.getContext("2d");
 
 const rouletteSong = document.getElementById("rouletteSong");
 const finishSong = document.getElementById("finishSong");
@@ -10,6 +12,8 @@ const overlay = document.getElementById("overlay");
 
 canvasWheel.width = window.innerWidth;
 canvasWheel.height = window.innerHeight;
+canvasArrow.width = window.innerWidth;
+canvasArrow.height = window.innerHeight;
 
 const sectors = [];
 
@@ -43,6 +47,29 @@ let requestId;
 
 const getCurrentSectorIndex = () => Math.floor(sectorCount - currentAngle / TAU * sectorCount) % sectorCount;
 
+const arrowLength = 50;
+const arrowWidth = 40;
+let arrowAngle = 90;
+
+const drawArrow = () => {
+    ctxArrow.save();
+    ctxArrow.translate(canvasArrow.width / 2, canvasArrow.height / 2 - diameter / 2 - 50);
+    ctxArrow.rotate((arrowAngle * PI) / 180);
+    ctxArrow.fillStyle = "orange";
+    ctxArrow.strokeStyle = "black";
+    ctxArrow.lineWidth = 2;
+    ctxArrow.beginPath();
+    ctxArrow.moveTo(0, -arrowWidth / 2);
+    ctxArrow.lineTo(arrowLength, 0);
+    ctxArrow.lineTo(0, arrowWidth / 2);
+    ctxArrow.lineTo(0, -arrowWidth / 2);
+    ctxArrow.closePath();
+    ctxArrow.fill();
+    ctxArrow.stroke();
+    ctxArrow.restore();
+};
+
+
 const drawSector = (sector, i) => {
     const startAngle = sectorAngle * i;
     ctxWheel.save();
@@ -62,6 +89,8 @@ const drawSector = (sector, i) => {
     ctxWheel.fillText(sector.label, radius - 10, 10);
     ctxWheel.stroke();
     ctxWheel.restore();
+
+    drawArrow();
 };
 
 const rotateWheel = () => {
@@ -122,6 +151,7 @@ const displayResult = () => {
     result.textContent = `${sector.label}`;
     result.style.backgroundColor = `${sector.color}`;
 
+    finishSong.volume = 0.3;
     finishSong.play();
     overlay.classList.add("overlay");
     result.classList.add("resultVictory");
