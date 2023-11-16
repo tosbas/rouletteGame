@@ -32,8 +32,8 @@ const PI = Math.PI;
 const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
-const friction = 0.996;
-const minAngularVelocity = 0.0005;
+const friction = 0.995;
+const minAngularVelocity = 0.0008;
 
 let maxAngularVelocity = 0;
 let currentAngularVelocity = 0;
@@ -93,6 +93,8 @@ const drawSector = (sector, i) => {
     drawArrow();
 };
 
+let starTime = 0;
+
 const rotateWheel = () => {
     finishSong.pause();
     finishSong.currentTime = 0;
@@ -112,6 +114,9 @@ const startAnimationLoop = () => {
     const sector = sectors[getCurrentSectorIndex()];
     result.textContent = `${sector.label}`;
     result.style.backgroundColor = `${sector.color}`;
+
+    const currentTime = (Date.now() - starTime) /1000;
+    console.log(currentTime);
 
     if (currentAngularVelocity >= maxAngularVelocity) isAccelerating = false;
 
@@ -165,7 +170,7 @@ const displayResult = () => {
         overlay.classList.remove("overlay");
         result.classList.remove("resultVictory");
     }, 7000);
-};
+}
 
 btnSpin.addEventListener("click", () => {
     if (isSpinning) return;
@@ -174,6 +179,7 @@ btnSpin.addEventListener("click", () => {
     rouletteSong.currentTime = 0;
     currentAngle = rand(-TAU / 2, TAU / 2);
     maxAngularVelocity = rand(0.20, 0.40);
+    starTime = Date.now();
     clearTimeout(timeout);
     cancelAnimationFrame(requestId);
     startAnimationLoop();
