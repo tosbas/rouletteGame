@@ -18,9 +18,21 @@ canvasArrow.height = window.innerHeight;
 const sectors = [];
 
 for (let i = 5; i < 105; i += 5) {
-    let color = (i === 95) ? `hsl(0, 70%, 60%)` : (i === 100) ? "hsl(10, 100%, 50%)" : `hsl(${i * 255}, 70%, 60%)`;
+    let color = `hsl(${i * 255}, 70%, 60%)`;
     sectors.push({ id: i, color: color, label: (i === 95) ? 50 : i });
 }
+
+const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
+
+
 
 const rand = (min, max) => Math.random() * (max - min) + min;
 
@@ -37,7 +49,7 @@ const minAngularVelocity = 0.0008;
 
 let maxAngularVelocity = 0;
 let currentAngularVelocity = 0;
-let currentAngle = 0;
+let currentAngle = rand(-TAU / 2, TAU / 2);
 
 let isSpinning = false;
 let isAccelerating = false;
@@ -115,7 +127,7 @@ const startAnimationLoop = () => {
     result.textContent = `${sector.label}`;
     result.style.backgroundColor = `${sector.color}`;
 
-    const currentTime = (Date.now() - starTime) /1000;
+    const currentTime = (Date.now() - starTime) / 1000;
     console.log(currentTime);
 
     if (currentAngularVelocity >= maxAngularVelocity) isAccelerating = false;
@@ -174,17 +186,20 @@ const displayResult = () => {
 
 btnSpin.addEventListener("click", () => {
     if (isSpinning) return;
+    shuffleArray(sectors);
+    sectors.forEach(drawSector);
     isSpinning = true;
     isAccelerating = true;
     rouletteSong.currentTime = 0;
     currentAngle = rand(-TAU / 2, TAU / 2);
     maxAngularVelocity = rand(0.20, 0.40);
     starTime = Date.now();
+
     clearTimeout(timeout);
     cancelAnimationFrame(requestId);
     startAnimationLoop();
 });
 
+shuffleArray(sectors);
 sectors.forEach(drawSector);
-
 rotateWheel();
