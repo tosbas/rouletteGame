@@ -15,6 +15,14 @@ canvasWheel.height = window.innerHeight;
 canvasArrow.width = window.innerWidth;
 canvasArrow.height = window.innerHeight;
 
+window.addEventListener("resize", () => {
+    canvasWheel.width = window.innerWidth;
+    canvasWheel.height = window.innerHeight;
+    canvasArrow.width = window.innerWidth;
+    canvasArrow.height = window.innerHeight;
+    sectors.forEach(drawSector);
+})
+
 const sectors = [];
 
 for (let i = 5; i < 105; i += 5) {
@@ -32,8 +40,6 @@ const shuffleArray = (array) => {
 }
 
 
-
-
 const rand = (min, max) => Math.random() * (max - min) + min;
 
 const sectorCount = sectors.length;
@@ -44,7 +50,7 @@ const PI = Math.PI;
 const TAU = 2 * PI;
 
 const sectorAngle = TAU / sectorCount;
-const friction = 0.995;
+const friction = 0.993;
 const minAngularVelocity = 0.0008;
 
 let maxAngularVelocity = 0;
