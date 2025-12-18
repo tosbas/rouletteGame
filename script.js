@@ -1,6 +1,6 @@
 function generateSectors() {
     const wheelSectors = [];
-    const sectorColors = ['#f82', '#fb0','#ac4848ff' ];  // Alternance de couleurs
+    const sectorColors = ['#f82', '#fb0', '#ac4848ff'];  // Alternance de couleurs
     const specialColor = '#ccc';  // Couleur spéciale pour le secteur de départ (gris clair)
     let sectorValues = [];
 
@@ -36,7 +36,7 @@ function generateSectors() {
 let wheelSectors = generateSectors();
 
 // Paramètre pour contrôler le temps de rotation (modifiable)
-let rotationDuration = 10; // Durée de la rotation en secondes (par exemple, 1 seconde)
+let rotationDuration = 12; // Durée de la rotation en secondes (par exemple, 1 seconde)
 const fullCircle = 2 * Math.PI;  // Tour complet en radians
 const totalSectors = wheelSectors.length;
 const spinButton = document.querySelector("#spin");
@@ -46,19 +46,19 @@ const canvasDiameter = ctx.canvas.width;
 const canvasRadius = canvasDiameter / 2;
 
 let currentAngularVelocity = 0;
-let currentAngle = 0.1;  // Angle de rotation initial
+let currentAngle = 0.15;  // Angle de rotation initial
 let isWheelSpinning = false;
 let animationFrameId = null; // ID pour requestAnimationFrame
 
-const decelerationFactor = 0.99;  // Facteur de décélération (ajuste ce facteur pour un arrêt plus rapide ou plus lent)
-const minAngularVelocity = 0.001; // Vitesse angulaire minimale pour l'arrêt
+const decelerationFactor = 0.99;  // Facteur de décélération
+const minAngularVelocity = 0.01; // Vitesse angulaire minimale pour l'arrêt
 const audio = new Audio('wheel-sound.mp3');  // Son pour la roue
 
 let startTime = null; // Moment où le moteur commence à tourner
 let elapsedTime = 0; // Temps écoulé depuis le début de la rotation
 
 // Calcul de la vitesse angulaire initiale en fonction du temps de rotation
-const initialAngularVelocity = fullCircle / rotationDuration / (1 - decelerationFactor);
+const initialAngularVelocity = rotationDuration / (1 - decelerationFactor);
 
 // Obtenir l'index du secteur actuel
 const getCurrentSectorIndex = () => Math.floor(totalSectors - currentAngle / fullCircle * totalSectors) % totalSectors;
