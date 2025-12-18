@@ -1,6 +1,6 @@
 function generateSectors() {
     const wheelSectors = [];
-    const sectorColors = ['#f82', '#fb0'];  // Alternance de couleurs
+    const sectorColors = ['#f82', '#fb0','#ac4848ff' ];  // Alternance de couleurs
     const specialColor = '#ccc';  // Couleur spéciale pour le secteur de départ (gris clair)
     let sectorValues = [];
 
@@ -19,7 +19,7 @@ function generateSectors() {
 
     // Générer les secteurs avec des couleurs alternées
     for (let i = 0; i < 21; i++) {
-        let color = sectorColors[i % 2];  // Alternance de couleurs
+        let color = sectorColors[i % 3];  // Alternance de couleurs
         if (i === fixedSector) {
             // Appliquer la couleur spéciale pour le secteur de départ
             color = fixedSectorColor;
