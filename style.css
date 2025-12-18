@@ -1,0 +1,74 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  background-color: beige;
+}
+
+canvas {
+  position: relative;
+  z-index: 0;
+}
+
+#spin {
+  position: relative;
+  z-index: 1;
+  padding: 5px;
+  width: 200px;
+  display: block;
+  margin: 10px auto;
+  border-radius: 10px;
+}
+
+#result {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centrage parfait */
+  background-color: orange;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  font-weight: 700;
+  font-size: 5rem;
+  border: 5px solid white;
+}
+
+#result.anim{
+    animation: enlargeText 2s ease-in-out infinite;
+}
+
+@keyframes enlargeText {
+  0% {
+    font-size: 5rem;
+  }
+  50% {
+    font-size: 7rem; /* Taille maximale */
+  }
+  100% {
+    font-size: 5rem;
+  }
+}
+
+
+#wheelOfFortune {
+  display: flex;
+  flex-direction: column;
+}
+
+#cursor {
+  position: absolute;
+  top: 55px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  width: 0px;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 25px solid white;
+}
