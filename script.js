@@ -89,7 +89,6 @@ const drawSector = (sector, index) => {
 const applyRotation = () => {
     const currentSector = wheelSectors[getCurrentSectorIndex()];
     ctx.canvas.style.transform = `rotate(${currentAngle - mathPI / 2}rad)`;
-    spinButton.style.background = currentSector.color;
 };
 
 const updateFrame = () => {

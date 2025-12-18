@@ -55,7 +55,6 @@ canvas {
   }
 }
 
-
 #wheelOfFortune {
   display: flex;
   flex-direction: column;
@@ -63,12 +62,48 @@ canvas {
 
 #cursor {
   position: absolute;
-  top: 55px;
+  top: 0%; /* Le curseur est fixé au sommet */
   left: 50%;
   transform: translateX(-50%) rotate(180deg);
-  width: 0px;
+  width: 0;
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-bottom: 25px solid white;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  body {
+    height: auto; /* Ajuste la hauteur pour les écrans mobiles */
+    padding: 10px;
+    height: 100vh;
+  }
+
+  #spin {
+    width: 150px; /* Réduit la taille du bouton sur mobile */
+    padding: 8px;
+  }
+
+  #result {
+    width: 150px; /* Réduit la taille du résultat */
+    height: 150px;
+    font-size: 3rem; /* Réduit la taille du texte */
+  }
+
+  #result.anim {
+    animation: enlargeText 2s ease-in-out infinite;
+  }
+
+  canvas {
+    width: 100%; /* Assure que le canvas prend toute la largeur de l'écran */
+    height: auto; /* Maintient les proportions */
+  }
+
+  #cursor {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid white;
+    top: 0%; /* Assure que le curseur reste en haut de la roue */
+  }
 }
