@@ -48,7 +48,7 @@ let animationFrameId = null; // ID pour requestAnimationFrame
 const audio = new Audio('wheel-sound.mp3');  // Son pour la roue
 
 // Calcul de la vitesse angulaire initiale pour un arrêt en 10 secondes
-const totalRotationTime = 12; // Temps total pour un tour complet (en secondes)
+const totalRotationTime = 8; // Temps total pour un tour complet (en secondes)
 const initialAngularVelocity = fullCircle / totalRotationTime / (1 - decelerationFactor);
 
 let previousSectorIndex = -1;
@@ -87,7 +87,6 @@ const drawSector = (sector, index) => {
 
 //* Appliquer une rotation CSS au canevas */
 const applyRotation = () => {
-    const currentSector = wheelSectors[getCurrentSectorIndex()];
     ctx.canvas.style.transform = `rotate(${currentAngle - mathPI / 2}rad)`;
 };
 
@@ -101,6 +100,8 @@ const updateFrame = () => {
     // Si la vitesse est inférieure à la vitesse minimale, arrêter la rotation
     if (currentAngularVelocity < minAngularVelocity) {
         isWheelSpinning = false;
+        audio.pause();
+        audio.currentTime = 0;
         result.classList.add('anim');
         cancelAnimationFrame(animationFrameId);
     }
@@ -108,17 +109,6 @@ const updateFrame = () => {
     // Mise à jour de l'angle
     currentAngle += currentAngularVelocity;
     currentAngle %= fullCircle; // Normaliser l'angle
-
-    const currentSectorIndex = getCurrentSectorIndex();
-
-    // Condition pour jouer le son avec une fréquence ajustée en fonction de la vitesse
-    if (currentSectorIndex !== previousSectorIndex) {
-        audio.play();
-        if (currentAngularVelocity < 0.01) {  // Jouer moins souvent si la vitesse est élevée
-            audio.currentTime = 0; // Réinitialiser le son
-        }
-        previousSectorIndex = currentSectorIndex;
-    }
 
     applyRotation(); // Appliquer la rotation CSS !
 
@@ -134,7 +124,7 @@ const startEngine = () => {
 // Démarrer le moteur lors du clic sur le bouton
 spinButton.addEventListener("click", () => {
     if (isWheelSpinning) return;
-
+    audio.play();
     result.classList.remove('anim');
     result.innerText = '';
     isWheelSpinning = true;

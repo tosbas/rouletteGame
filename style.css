@@ -26,7 +26,7 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centrage parfait */
+  transform: translate(-50%, -50%);
   background-color: orange;
   width: 200px;
   height: 200px;
@@ -39,8 +39,8 @@ canvas {
   border: 5px solid white;
 }
 
-#result.anim{
-    animation: enlargeText 2s ease-in-out infinite;
+#result.anim {
+  animation: enlargeText 2s ease-in-out infinite;
 }
 
 @keyframes enlargeText {
@@ -56,13 +56,14 @@ canvas {
 }
 
 #wheelOfFortune {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
 
 #cursor {
   position: absolute;
-  top: 0%; /* Le curseur est fixé au sommet */
+  top: 0; /* Le curseur est fixé au sommet */
   left: 50%;
   transform: translateX(-50%) rotate(180deg);
   width: 0;
@@ -85,10 +86,10 @@ canvas {
     padding: 8px;
   }
 
-  #result {
-    width: 150px; /* Réduit la taille du résultat */
-    height: 150px;
-    font-size: 3rem; /* Réduit la taille du texte */
+  #result{
+    width: 130px;
+    height: 130px;
+    font-size: 50px;
   }
 
   #result.anim {
@@ -104,6 +105,5 @@ canvas {
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     border-bottom: 20px solid white;
-    top: 0%; /* Assure que le curseur reste en haut de la roue */
   }
 }
