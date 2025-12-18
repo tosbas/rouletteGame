@@ -98,9 +98,6 @@ const applyRotation = () => {
     ctx.canvas.style.transform = `rotate(${currentAngle - Math.PI / 2}rad)`;
 };
 
-let previousSectorIndex = -1;
-let sectorChangeCounter = 0;
-
 // Fonction de mise à jour de la frame
 const updateFrame = () => {
     if (!isWheelSpinning) return;
