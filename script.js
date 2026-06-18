@@ -1,162 +1,125 @@
-function generateSectors() {
-    const wheelSectors = [];
-    const sectorColors = ['#f82', '#fb0', '#ac4848ff'];  // Alternance de couleurs
-    const specialColor = '#ccc';  // Couleur spéciale pour le secteur de départ (gris clair)
-    let sectorValues = [];
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+const result = document.querySelector('#result');
 
-    // Créer un tableau avec les valeurs de 5 à 95 et ajouter deux fois 50
-    for (let i = 5; i <= 100; i += 5) {
-        sectorValues.push(i);
-    }
-    sectorValues.push(50);  // Ajouter une deuxième occurrence de 50
+const MARGIN = 20;
+const TAU = Math.PI * 2;
+const HALF_PI = Math.PI / 2;
 
-    // Mélanger les valeurs de manière aléatoire
-    sectorValues = sectorValues.sort(() => Math.random() - 0.5);
+const ROTATION_POWER = 1;
+const DECELERATION = 0.99;
+const MIN_VELOCITY = 0.001;
 
-    // Placer le premier '50' dans une position fixe avec la couleur spéciale
-    const fixedSector = sectorValues.indexOf(50); // Trouver la première occurrence de 50
-    const fixedSectorColor = specialColor;
+let radius;
+let currentAngle = 0.15;
+let angularVelocity = 0;
+let isSpinning = false;
 
-    // Générer les secteurs avec des couleurs alternées
-    for (let i = 0; i < 21; i++) {
-        let color = sectorColors[i % 3];  // Alternance de couleurs
-        if (i === fixedSector) {
-            // Appliquer la couleur spéciale pour le secteur de départ
-            color = fixedSectorColor;
-        }
-        wheelSectors.push({
-            color: color,  // Alternance de couleurs ou couleur spéciale
-            label: sectorValues[i].toString()  // Valeur aléatoire
-        });
-    }
+const sectors = generateSectors();
+const sectorArc = TAU / sectors.length;
 
-    return wheelSectors;
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const diameter = Math.min(canvas.width, canvas.height);
+    radius = diameter / 2 - MARGIN;
+
+    drawWheel();
 }
 
-let wheelSectors = generateSectors();
+function generateSectors() {
+    const colors = ['#f82', '#fb0', '#ac4848ff'];
 
-// Paramètre pour contrôler le temps de rotation (modifiable)
-let rotationDuration = 12; // Durée de la rotation en secondes (par exemple, 1 seconde)
-const fullCircle = 2 * Math.PI;  // Tour complet en radians
-const totalSectors = wheelSectors.length;
-const spinButton = document.querySelector("#spin");
-const result = document.querySelector("#result");
-const ctx = document.querySelector("#wheel").getContext('2d');
-const canvasDiameter = ctx.canvas.width;
-const canvasRadius = canvasDiameter / 2;
+    const sectors = Array.from({ length: 10 }, (_, i) => ({
+        label: (i + 1) * 5,
+        color: colors[i % colors.length]
+    }));
 
-let currentAngularVelocity = 0;
-let currentAngle = 0.15;  // Angle de rotation initial
-let isWheelSpinning = false;
-let animationFrameId = null; // ID pour requestAnimationFrame
+    for (let i = sectors.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [sectors[i], sectors[j]] = [sectors[j], sectors[i]];
+    }
 
-const decelerationFactor = 0.99;  // Facteur de décélération
-const minAngularVelocity = 0.01; // Vitesse angulaire minimale pour l'arrêt
-const audio = new Audio('wheel-sound.mp3');  // Son pour la roue
+    return sectors;
+}
 
-let startTime = null; // Moment où le moteur commence à tourner
-let elapsedTime = 0; // Temps écoulé depuis le début de la rotation
+function getCurrentSectorIndex() {
+    return Math.floor(
+        sectors.length - currentAngle / TAU * sectors.length
+    ) % sectors.length;
+}
 
-// Calcul de la vitesse angulaire initiale en fonction du temps de rotation
-const initialAngularVelocity = rotationDuration / (1 - decelerationFactor);
+function drawSector(sector, index) {
+    const angle = sectorArc * index;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
 
-// Obtenir l'index du secteur actuel
-const getCurrentSectorIndex = () => Math.floor(totalSectors - currentAngle / fullCircle * totalSectors) % totalSectors;
-
-// Dessiner les secteurs sur le canevas
-const drawSector = (sector, index) => {
-    const sectorArc = fullCircle / totalSectors;
-    const sectorAngle = sectorArc * index;
     ctx.save();
 
-    // Dessiner le segment
     ctx.beginPath();
-    ctx.moveTo(canvasRadius, canvasRadius);
-    ctx.arc(canvasRadius, canvasRadius, canvasRadius, sectorAngle, sectorAngle + sectorArc);
-    ctx.lineTo(canvasRadius, canvasRadius);
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, angle, angle + sectorArc);
+    ctx.closePath();
+
     ctx.fillStyle = sector.color;
     ctx.fill();
 
-    // Ajouter une bordure autour du segment
-    ctx.lineWidth = 0.5;  // Épaisseur de la bordure
-    ctx.strokeStyle = "#000";  // Couleur de la bordure (noir)
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#000";
     ctx.stroke();
 
-    // Dessiner le texte du secteur
-    ctx.translate(canvasRadius, canvasRadius);
-    ctx.rotate(sectorAngle + sectorArc / 2);
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle + sectorArc / 2);
+
     ctx.textAlign = "right";
     ctx.fillStyle = "#fff";
     ctx.font = "bold 30px sans-serif";
-    ctx.fillText(sector.label, canvasRadius - 10, 10);
+    ctx.fillText(sector.label, radius - 10, 10);
 
     ctx.restore();
-};
+}
 
-// Appliquer la rotation CSS au canevas
-const applyRotation = () => {
-    ctx.canvas.style.transform = `rotate(${currentAngle - Math.PI / 2}rad)`;
-};
+function drawWheel() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// Fonction de mise à jour de la frame
-const updateFrame = () => {
-    if (!isWheelSpinning) return;
+    sectors.forEach(drawSector);
+}
 
-    // Calculer le temps écoulé depuis le début de la rotation
-    elapsedTime = (performance.now() - startTime) / 1000; // Temps en secondes
+function animate() {
 
-    // Si le temps écoulé est supérieur ou égal à la durée de la rotation, arrêter
-    if (elapsedTime >= rotationDuration) {
-        // Arrêter immédiatement la roue
-        currentAngularVelocity = 0;
-        isWheelSpinning = false;
-        audio.pause();
-        audio.currentTime = 0;
+    if (angularVelocity < MIN_VELOCITY) {
         result.classList.add('anim');
-        cancelAnimationFrame(animationFrameId);
-    } else {
-        // Appliquer la décélération
-        currentAngularVelocity *= decelerationFactor;
+        isSpinning = false;
+        return;
     }
 
-    // Mise à jour de l'angle
-    currentAngle += currentAngularVelocity;
-    currentAngle %= fullCircle; // Normaliser l'angle
+    angularVelocity *= DECELERATION;
 
-    // Afficher le secteur actuel
-    result.innerText = wheelSectors[getCurrentSectorIndex()].label;
+    currentAngle = (currentAngle + angularVelocity) % TAU;
 
-    applyRotation(); // Appliquer la rotation CSS !
+    result.textContent = sectors[getCurrentSectorIndex()].label;
 
-    // Continue à appeler updateFrame tant que la roue tourne
-    animationFrameId = requestAnimationFrame(updateFrame);
-};
+    canvas.style.transform =
+        `rotate(${currentAngle - HALF_PI}rad)`;
 
-// Démarrer le moteur
-const startEngine = () => {
-    startTime = performance.now(); // Capturer le temps de démarrage
-    currentAngularVelocity = initialAngularVelocity; // Initialiser la vitesse angulaire
-    updateFrame(); // Démarrer la mise à jour de la frame
-};
+    requestAnimationFrame(animate);
+}
 
-// Démarrer la roue lorsqu'on clique sur le bouton
-spinButton.addEventListener("click", () => {
-    if (isWheelSpinning) return;
-    wheelSectors = generateSectors(); // Regénérer les secteurs aléatoirement à chaque clic
-    drawWheel(); // Redessiner la roue avec les nouveaux secteurs
-    audio.play();
+result.addEventListener('click', () => {
+
+    if (isSpinning) return;
+
     result.classList.remove('anim');
-    result.innerText = '';
-    isWheelSpinning = true;
-    startEngine(); // Démarrer avec la vitesse calculée
+
+    isSpinning = true;
+
+    angularVelocity =
+        ROTATION_POWER / (1 - DECELERATION);
+
+    animate();
 });
 
-// Dessiner la roue avec les nouveaux secteurs
-const drawWheel = () => {
-    wheelSectors.forEach(drawSector);  // Dessiner tous les secteurs
-    applyRotation();  // Appliquer la rotation initiale
-};
+window.addEventListener('resize', resizeCanvas);
 
-drawWheel(); // Initialiser la rotation et dessiner les secteurs
-
-
+resizeCanvas();
