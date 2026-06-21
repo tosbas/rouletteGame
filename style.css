@@ -8,8 +8,6 @@ body {
   margin: 0;
 }
 
-
-
 #result.anim {
   animation: enlargeText 2s ease-in-out infinite;
 }
@@ -41,30 +39,26 @@ body {
 
 #cursor {
   position: absolute;
+  z-index: 99;
   left: 50%;
-  top: -5px;
   transform: translateX(-50%);
-  width: 0;
-  height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-bottom: 25px solid white;
 }
 
 #result {
-  position: relative;
-  top: 50%;
-  left: 50%;
+  position: absolute;
   transform: translate(-50%, -50%);
   background-color: orange;
-  width: 80%;
-  height: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
   font-weight: 700;
-  font-size: 5rem;
+  font-size: 4rem;
   border: 5px solid white;
   cursor: pointer;
+  top: 50%;
+  left:50%;
 }
